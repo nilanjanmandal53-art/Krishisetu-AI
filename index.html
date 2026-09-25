@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Krishisetu AI - Farmer Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-slate-100 font-sans min-h-screen flex items-center justify-center p-4">
+
+    <!-- LOGIN / REGISTRATION CARD -->
+    <div id="auth-card" class="bg-white shadow-xl rounded-2xl w-full max-w-md p-8 border border-slate-200">
+        <div class="text-center mb-6">
+            <div class="bg-emerald-100 text-emerald-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3 text-2xl">
+                <i class="fa-solid fa-wheat-awn"></i>
+            </div>
+            <h2 class="text-2xl font-bold text-slate-800">Krishisetu AI Portal</h2>
+            <p class="text-slate-500 text-sm">Direct Farm-to-Buyer Marketplace</p>
+        </div>
+
+        <!-- Role Selection -->
+        <div class="flex bg-slate-100 p-1 rounded-lg mb-6">
+            <button id="btn-farmer" onclick="setRole('Farmer')" class="flex-1 py-2 text-sm font-semibold rounded-md bg-white text-emerald-600 shadow-sm transition">Farmer</button>
+            <button id="btn-fpo" onclick="setRole('FPO')" class="flex-1 py-2 text-sm font-semibold rounded-md text-slate-600 transition">FPO Entity</button>
+        </div>
+
+        <!-- Form Inputs -->
+        <div class="space-y-4">
+            <div>
+                <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Full Name</label>
+                <input type="text" id="input-name" placeholder="Ramesh Kumar" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:outline-none text-slate-800">
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Mobile Number</label>
+                <input type="tel" id="input-phone" placeholder="+91 98765 43210" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:outline-none text-slate-800">
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">District / Hub</label>
+                <input type="text" id="input-district" placeholder="South 24 Parganas" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:outline-none text-slate-800">
+            </div>
+
+            <button onclick="loginFarmer()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-lg shadow-md transition duration-200 mt-2">
+                Login / Access Dashboard
+            </button>
+        </div>
+    </div>
+
+    <!-- FARMER DASHBOARD UI -->
+    <div id="dashboard-card" class="hidden bg-white shadow-2xl rounded-2xl w-full max-w-2xl border border-slate-200 overflow-hidden relative">
+        <!-- Header -->
+        <div class="bg-emerald-700 p-6 text-white flex justify-between items-center">
+            <div class="flex items-center gap-4">
+                <!-- MODERN AVATAR PILL PROFILE BUTTON -->
+                <button onclick="toggleSidebar()" class="flex items-center gap-2.5 bg-emerald-800/80 hover:bg-emerald-800 text-white px-3 py-1.5 rounded-full border border-emerald-600/50 shadow-sm transition-all duration-200 active:scale-95 group" title="Open Profile Details">
+                    <div class="relative flex items-center justify-center w-7 h-7 rounded-full bg-emerald-600 text-emerald-100 font-semibold text-xs border border-emerald-400/30">
+                        <i class="fa-solid fa-user text-xs"></i>
+                        <span class="absolute bottom-0 right-0 w-2 h-2 bg-emerald-400 border border-emerald-800 rounded-full"></span>
+                    </div>
+                    <span class="text-xs font-medium pr-1 text-emerald-50 group-hover:text-white">Profile</span>
+                    <i class="fa-solid fa-chevron-right text-[10px] text-emerald-300 group-hover:translate-x-0.5 transition-transform"></i>
+                </button>
+
+                <div>
+                    <span class="bg-emerald-800 text-emerald-200 text-xs px-2.5 py-1 rounded-full uppercase font-bold tracking-wider" id="dash-role">Farmer</span>
+                    <h1 class="text-2xl font-bold mt-1" id="dash-welcome">Welcome, Farmer</h1>
+                    <p class="text-emerald-100 text-xs mt-0.5" id="dash-location"><i class="fa-solid fa-location-dot"></i> Sonarpur, West Bengal</p>
+                </div>
+            </div>
+            <button onclick="logout()" class="text-xs bg-emerald-800 hover:bg-emerald-900 px-3 py-2 rounded-lg transition"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+        </div>
+
+        <!-- Dashboard Content -->
+        <div class="p-6 space-y-6">
+            <h3 class="text-slate-800 font-bold border-b pb-2 text-lg">Today's Overview</h3>
+
+            <!-- Metrics Grid -->
+            <div class="grid grid-cols-2 gap-4">
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    <p class="text-xs text-slate-500 font-medium">Available Produce</p>
+                    <p class="text-2xl font-black text-slate-800 mt-1" id="dash-produce">500 kg</p>
+                </div>
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    <p class="text-xs text-slate-500 font-medium">Pending Orders</p>
+                    <p class="text-2xl font-black text-amber-600 mt-1" id="dash-orders">12</p>
+                </div>
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    <p class="text-xs text-slate-500 font-medium">Today's Sales</p>
+                    <p class="text-2xl font-black text-emerald-600 mt-1" id="dash-sales">₹45,000</p>
+                </div>
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    <p class="text-xs text-slate-500 font-medium">AI Alerts</p>
+                    <p class="text-2xl font-black text-indigo-600 mt-1" id="dash-alerts">3</p>
+                </div>
+            </div>
+
+            <!-- PRODUCE INFORMATION MODULE SECTION -->
+            <div class="border-t border-slate-200 pt-6">
+                <div class="flex justify-between items-center mb-4">
+                    <div>
+                        <h3 class="text-base font-bold text-slate-800">My Listed Produce</h3>
+                        <p class="text-xs text-slate-500">Manage crop listings, update stock levels, and set pricing.</p>
+                    </div>
+                    <button onclick="openProduceModal()" class="flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-2 rounded-lg shadow transition active:scale-95">
+                        <i class="fa-solid fa-plus"></i> Add Produce
+                    </button>
+                </div>
+
+                <!-- Active Listings Container -->
+                <div id="produce-list-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Dynamic listings will be rendered here -->
+                </div>
+            </div>
+
+            <!-- AI Alerts Banner -->
+            <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-4">
+                <div class="flex items-center space-x-2 text-indigo-700 font-bold text-sm mb-2">
+                    <i class="fa-solid fa-robot"></i>
+                    <span>AI Engine Real-Time Advisory</span>
+                </div>
+                <ul class="text-xs text-indigo-900 space-y-1.5 list-disc list-inside">
+                    <li>Tomato demand is high in South 24 Parganas (+15% payout predicted).</li>
+                    <li>Rain forecast tomorrow—schedule early harvest pickup.</li>
+                    <li>1 Bulk Retailer inquiry pending for 500 kg batch.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADD / EDIT PRODUCE MODAL -->
+    <div id="produce-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full border border-slate-200 shadow-2xl overflow-hidden">
+            <div class="bg-emerald-700 p-4 text-white flex justify-between items-center">
+                <h3 class="text-sm font-bold flex items-center gap-2" id="modal-title"><i class="fa-solid fa-wheat-field"></i> Add Produce Listing</h3>
+                <button type="button" onclick="closeProduceModal()" aria-label="Close produce modal" class="text-emerald-100 hover:text-white"><i class="fa-solid fa-xmark text-lg" aria-hidden="true"></i></button>
+            </div>
+
+            <form id="produce-form" onsubmit="saveProduce(event)" class="p-5 space-y-4 max-h-[80vh] overflow-y-auto">
+                <input type="hidden" id="edit-produce-id">
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Crop / Product Name</label>
+                    <input type="text" id="prod-name" placeholder="e.g. Tomato" required class="w-full text-xs px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Quantity (kg)</label>
+                        <input type="number" id="prod-qty" placeholder="500" required class="w-full text-xs px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Expected Price (₹/kg)</label>
+                        <input type="number" id="prod-price" placeholder="30" required class="w-full text-xs px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Quality Grade</label>
+                        <select id="prod-quality" title="Quality grade" class="w-full text-xs px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:outline-none bg-white">
+                            <option value="Grade A">Grade A (Premium)</option>
+                            <option value="Grade B">Grade B (Standard)</option>
+                            <option value="Grade C">Grade C (Local)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Storage Condition</label>
+                        <select id="prod-storage" title="Storage condition" class="w-full text-xs px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:outline-none bg-white">
+                            <option value="Cold Store">Cold Store</option>
+                            <option value="Ambient Shed">Ambient Shed</option>
+                            <option value="Dry Storage">Dry Storage</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Harvest Date</label>
+                        <input type="date" id="prod-harvest-date" title="Harvest date" required class="w-full text-xs px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Available Until</label>
+                        <input type="date" id="prod-expiry-date" title="Available until date" required class="w-full text-xs px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Location / Hub</label>
+                    <input type="text" id="prod-location" placeholder="e.g. South 24 Parganas" required class="w-full text-xs px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                </div>
+
+                <div class="pt-3 flex justify-end gap-2 border-t border-slate-200">
+                    <button type="button" onclick="closeProduceModal()" class="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-lg">Cancel</button>
+                    <button type="submit" class="px-4 py-2 text-xs font-bold bg-emerald-600 text-white hover:bg-emerald-700 rounded-lg shadow">Publish Produce</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- LEFT SLIDE-OUT SIDEBAR BACKDROP OVERLAY -->
+    <div id="sidebar-overlay" onclick="toggleSidebar()" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-40 hidden transition-opacity duration-300"></div>
+
+    <!-- LEFT SLIDE-OUT SIDEBAR DRAWER -->
+    <div id="profile-sidebar" class="fixed top-0 left-0 h-full w-80 max-w-[85vw] bg-white shadow-2xl z-50 transform -translate-x-full transition-transform duration-300 ease-in-out border-r border-slate-200 flex flex-col">
+        <div class="bg-emerald-700 p-4 text-white flex items-center justify-between border-b border-emerald-800">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-user-gear text-lg"></i>
+                <div>
+                    <h2 class="text-sm font-bold leading-tight">Profile & Entity Details</h2>
+                    <span id="role-badge" class="text-[10px] bg-emerald-800 text-emerald-200 px-2 py-0.5 rounded-full font-semibold uppercase">Farmer</span>
+                </div>
+            </div>
+            <button onclick="toggleSidebar()" title="Close profile sidebar" aria-label="Close profile sidebar" class="text-emerald-100 hover:text-white text-lg px-2 py-1 rounded-lg">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <form id="profile-form" onsubmit="handleProfileSubmit(event)" class="p-4 space-y-6 flex-1 overflow-y-auto">
+            <div class="space-y-4">
+                <h3 class="text-xs font-bold uppercase text-slate-400 tracking-wider">Identity</h3>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Entity Type</label>
+                    <div class="grid grid-cols-2 gap-2 bg-slate-100 p-1 rounded-lg">
+                        <button type="button" onclick="setProfileRole('Farmer')" id="prof-role-farmer" class="py-2 text-xs font-bold rounded-md bg-white text-emerald-700 shadow-sm">Farmer</button>
+                        <button type="button" onclick="setProfileRole('FPO')" id="prof-role-fpo" class="py-2 text-xs font-bold rounded-md text-slate-600">FPO Entity</button>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1" id="label-profile-name">Farmer / FPO Name</label>
+                    <input type="text" id="prof-input-name" placeholder="e.g. Ramesh Kumar" class="w-full text-xs px-3 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Location / District</label>
+                    <div class="flex gap-2">
+                        <input type="text" id="prof-input-location" placeholder="e.g. Sonarpur, West Bengal" class="w-full text-xs px-3 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                        <button type="button" onclick="autoDetectProfileLocation()" class="bg-emerald-100 text-emerald-700 px-2.5 rounded-lg text-xs font-bold whitespace-nowrap hover:bg-emerald-200 flex items-center gap-1 transition">
+                            <i class="fa-solid fa-location-crosshairs"></i> GPS
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <hr class="border-slate-200">
+
+            <div class="space-y-4">
+                <h3 class="text-xs font-bold uppercase text-slate-400 tracking-wider">Farm & Storage</h3>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Farm Capacity</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <input type="number" id="prof-input-acres" placeholder="Acres (e.g. 5)" class="text-xs px-3 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                        <input type="text" id="prof-input-crop" placeholder="Crop (e.g. Rice)" class="text-xs px-3 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Available On-Farm Storage</label>
+                    <div class="grid grid-cols-3 gap-1.5">
+                        <button type="button" onclick="setProfileStorage('None', event)" class="prof-storage-chip py-2 text-xs border rounded-lg text-slate-700 border-slate-300 font-medium transition">None</button>
+                        <button type="button" onclick="setProfileStorage('Cold Store', event)" class="prof-storage-chip py-2 text-xs border rounded-lg text-slate-700 border-slate-300 font-medium transition">Cold Store</button>
+                        <button type="button" onclick="setProfileStorage('Dry Shed', event)" class="prof-storage-chip py-2 text-xs border rounded-lg text-slate-700 border-slate-300 font-medium transition">Dry Shed</button>
+                    </div>
+                </div>
+            </div>
+
+            <hr class="border-slate-200">
+
+            <div class="space-y-4">
+                <h3 class="text-xs font-bold uppercase text-slate-400 tracking-wider">Logistics</h3>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Transport Availability</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button type="button" onclick="setProfileTransport('Self Owned', event)" class="prof-transport-chip py-2.5 px-2 border rounded-lg text-xs text-left text-slate-700 border-slate-300 flex items-center gap-1.5 transition">
+                            <i class="fa-solid fa-truck text-emerald-600"></i> Own Vehicle
+                        </button>
+                        <button type="button" onclick="setProfileTransport('Need Pickup', event)" class="prof-transport-chip py-2.5 px-2 border rounded-lg text-xs text-left text-slate-700 border-slate-300 flex items-center gap-1.5 transition">
+                            <i class="fa-solid fa-handshake text-indigo-600"></i> Need Pickup
+                        </button>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Preferred Selling Areas</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button type="button" onclick="setProfileArea('Local Mandi', event)" class="prof-area-chip py-2 text-xs border rounded-lg text-slate-700 border-slate-300 font-medium transition">Local Mandi</button>
+                        <button type="button" onclick="setProfileArea('Direct Retailers', event)" class="prof-area-chip py-2 text-xs border rounded-lg text-slate-700 border-slate-300 font-medium transition">Direct Retailers</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-3 border-t border-slate-200 flex justify-between items-center mt-auto">
+                <span id="profile-status" class="text-xs text-slate-500">Unsaved changes</span>
+                <button type="submit" class="py-2 px-4 text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition shadow">
+                    Save Profile
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
